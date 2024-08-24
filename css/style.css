@@ -1,0 +1,52 @@
+.container {
+  display: grid;
+  grid-template-rows: 1fr 5fr;
+}
+
+#topPanel {
+  background: #111111;
+}
+
+.perspDisp {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.topDetail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.topDetailLeft {
+  background-color: #ff3333;
+}
+
+.topDetailRight {
+  background: #336633;
+}
+
+.pointObs br {
+  display: none;
+}
+
+.perCan {
+  background: #444444;
+}
+
+.threeD {
+  background: #666666;
+}
+
+* {
+  font-family: Arial, Verdana, sans-serif;
+  color: rgb(240, 240, 240);
+  text-align: center;
+}
+
+.inv {
+  display: none;
+}
+
+#geom {
+  color: rgb(40, 40, 40);
+}

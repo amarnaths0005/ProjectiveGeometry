@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projective Geometry Example</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div id="topPanel">
+        <h1>Projective Geometry</h1>
+        <div class="topDetail">
+          <div class="topDetailLeft">
+            <fieldset id="point1" class="pointRed">
+              <legend>Observer Point Coordinates</legend>
+              x
+              <input
+                type="range"
+                id="pointObsX"
+                min="-10.00"
+                max="10.00"
+                step="0.01"
+                value="2.0"
+              />
+              <output id="obPoint1x" class="pointRed">2.000</output><br />
+              y
+              <input
+                type="range"
+                id="pointObsY"
+                min="-10.00"
+                max="-0.20"
+                step="0.01"
+                value="-3.0"
+              />
+              <output id="obPoint1y" class="pointRed">-3.000</output><br />
+              z
+              <input
+                type="range"
+                id="pointObsZ"
+                min="0.1"
+                max="15.00"
+                step="0.01"
+                value="2.5"
+              />
+              <output id="obPoint1z" class="pointRed">2.500</output><br />
+            </fieldset>
+          </div>
+          <div class="topDetailRight">
+            <label for="geom">Choose a geometry to view:</label>
+            <select name="geometry" id="geom">
+              <option value="point">Point</option>
+              <option value="lines">Parallel Lines</option>
+              <option value="circle">Circle</option>
+            </select>
+            <div id="point" class="inv">
+              <fieldset id="pointObjectPlane" class="pointObs">
+                <legend>Object Point Coordinates (z = 0)</legend>
+                x
+                <input
+                  type="range"
+                  id="pointCaseX"
+                  min="-10.00"
+                  max="10.00"
+                  step="0.01"
+                  value="2.0"
+                />
+                <output id="objectPoint1x" class="pointRed">1.000</output><br />
+                &emsp; &emsp; y
+                <input
+                  type="range"
+                  id="pointCaseY"
+                  min="0.1"
+                  max="50.00"
+                  step="0.01"
+                  value="3.0"
+                />
+                <output id="objectPoint1y" class="pointRed">-1.000</output
+                ><br />
+              </fieldset>
+            </div>
+            <div id="lines" class="inv">Parallel line Content 2</div>
+            <div id="circle" class="inv">Circle Content 3</div>
+          </div>
+        </div>
+      </div>
+      <div id="bottomPanelPerspectiveDisplay" class="perspDisp">
+        <div id="perspCanvas" class="perCan">
+          <canvas width="600" height="400" id="canvasPersp" >
+            Your browser does not support canvas.
+        </canvas>
+        </div>
+        <div id="webglOp" class="threeD"></div>
+      </div>
+    </div>
+
+    <script src="js/three.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>
