@@ -12,17 +12,24 @@
   grid-template-columns: 1fr 1fr;
 }
 
+.geomet {
+  background-color: #999;
+  color: rgb(40, 40, 40);
+}
+
 .topDetail {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
 .topDetailLeft {
-  background-color: #ff3333;
+  background-color: #333;
+  border-color: #ddd;
+  border: 2em;
 }
 
 .topDetailRight {
-  background: #336633;
+  background: #222;
 }
 
 .pointObs br {
@@ -37,14 +44,15 @@
   background: #666666;
 }
 
+.scene3D {
+  background-color: #666;
+  color: rgb(40, 40, 40);
+}
+
 * {
   font-family: Arial, Verdana, sans-serif;
   color: rgb(240, 240, 240);
   text-align: center;
-}
-
-.inv {
-  display: none;
 }
 
 #geom {
