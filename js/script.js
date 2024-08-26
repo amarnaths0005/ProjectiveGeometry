@@ -8,7 +8,7 @@
 Code to display Projective Geometry scene, for the cases of Point,
 Parallel Lines and Circle. 
 Based on class lecture - Short Term Evening Course, 
-on Joy of Mathematics, by Prof. Kaushal Kv Sir of 
+on Joy of Mathematics, by Prof. KV Sir of 
 Department of Mathematics, Indian Institute of Science, Bengaluru.
 
 Coding history:
