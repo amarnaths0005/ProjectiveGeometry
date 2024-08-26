@@ -1,6 +1,10 @@
 "use strict";
 
 /*
+  Shreemate Raamaanujaaya Namaha
+  Sri Raama Jayam
+  Sri Hayagreeva Parabrahmane Namaha
+
 Code to display Projective Geometry scene, for the cases of Point,
 Parallel Lines and Circle. 
 Based on class lecture - Short Term Evening Course, 
@@ -47,8 +51,11 @@ const Geometries = {
 
 let lineXRange, lineAngleRange;
 let XLineRange, AngleLineRange;
-let objectPlaneXarray = [-2.0, -1.0, 0.0, 1.0];
-let objectPlaneYarray = [4, 4, 4, 4];
+// let objectPlaneXarray = [-1.0, 1.0];
+// let objectPlaneYarray = [4, 4];
+
+let circleXRange, circleYRange, circleRadRange;
+let xCircle, yCircle, radCircle;
 
 let currentGeometry;
 
@@ -159,6 +166,36 @@ function init() {
     false
   );
 
+  circleXRange = document.getElementById("circleCaseXCoord");
+  circleXRange.addEventListener(
+    "input",
+    function () {
+      xCircle = parseFloat(circleXRange.value);
+      document.getElementById("objectCirclex").textContent = xCircle.toFixed(2);
+    },
+    false
+  );
+
+  circleYRange = document.getElementById("circleCaseYCoord");
+  circleYRange.addEventListener(
+    "input",
+    function () {
+      yCircle = parseFloat(circleYRange.value);
+      document.getElementById("objectCircley").textContent = yCircle.toFixed(2);
+    },
+    false
+  );
+
+  circleRadRange = document.getElementById("circleCaseRadius");
+  circleRadRange.addEventListener(
+    "input",
+    function () {
+      radCircle = parseFloat(circleRadRange.value);
+      document.getElementById("objectCircleRadius").textContent = radCircle.toFixed(2);
+    },
+    false
+  );
+
   document.getElementById("webglOp").appendChild(renderer.domElement);
   setupCameraPosition();
   showSelectedDiv();
@@ -172,16 +209,21 @@ function showSelectedDiv() {
   if (index === 0) {
     document.getElementById("point").style.display = "block";
     document.getElementById("lines").style.display = "none";
+    document.getElementById("circle").style.display = "none";
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Point;
   } else if (index === 1) {
     document.getElementById("point").style.display = "none";
     document.getElementById("lines").style.display = "block";
+    document.getElementById("circle").style.display = "none";
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Lines;
-    console.log("Coming soon!");
+    //console.log("Coming soon!");
   } else if (index === 2) {
-    console.log("Coming soon!");
+    document.getElementById("point").style.display = "none";
+    document.getElementById("lines").style.display = "none";
+    document.getElementById("circle").style.display = "block";
+    //console.log("Coming soon!");
   }
   handleGeometry();
 }
