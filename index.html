@@ -81,7 +81,7 @@
             </div>
             <div id="lines" class="control_group" style="display: none">
               <fieldset id="lineObjectPlane" class="lineObs">
-                <legend>Line End Point Location (y = z = 0)</legend>
+                <legend>Line End Point Location x, (y = z = 0)</legend>
                 x
                 <input
                   type="range"
@@ -104,7 +104,43 @@
                 <output id="objectAngle" class="pointRed">58</output><br />
               </fieldset>
             </div>
-            <div id="circle" class="inv"></div>
+
+            <div id="circle" class="control_group" style="display: none">
+              <fieldset id="circleObjectPlane" class="circleObs">
+                <legend>Circle Attributes</legend>
+                Centre X
+                <input
+                  type="range"
+                  id="circleCaseXCoord"
+                  min="-10.00"
+                  max="10.00"
+                  step="0.1"
+                  value="2.0"
+                />
+                <output id="objectCirclex" class="pointRed">2.00</output><br />
+                Centre Y
+                <input
+                  type="range"
+                  id="circleCaseYCoord"
+                  min="0.00"
+                  max="15.00"
+                  step="0.1"
+                  value="3.0"
+                />
+                <output id="objectCircley" class="pointRed">3.00</output><br />
+                &emsp; Radius
+                <input
+                  type="range"
+                  id="circleCaseRadius"
+                  min="1"
+                  max="15"
+                  step="0.1"
+                  value="3.5"
+                />
+                <output id="objectCircleRadius" class="pointRed">3.5</output
+                ><br />
+              </fieldset>
+            </div>
           </div>
         </div>
       </div>
