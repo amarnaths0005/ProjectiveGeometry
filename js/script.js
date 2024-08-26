@@ -220,7 +220,7 @@ function showSelectedDiv() {
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Lines;
     //console.log("Coming soon!");
-  } else if (index === 2) {
+  } else { //if (index === 2) {
     document.getElementById("point").style.display = "none";
     document.getElementById("lines").style.display = "none";
     document.getElementById("circle").style.display = "block";
