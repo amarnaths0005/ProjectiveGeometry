@@ -191,7 +191,8 @@ function init() {
     "input",
     function () {
       radCircle = parseFloat(circleRadRange.value);
-      document.getElementById("objectCircleRadius").textContent = radCircle.toFixed(2);
+      document.getElementById("objectCircleRadius").textContent =
+        radCircle.toFixed(2);
     },
     false
   );
@@ -223,6 +224,8 @@ function showSelectedDiv() {
     document.getElementById("point").style.display = "none";
     document.getElementById("lines").style.display = "none";
     document.getElementById("circle").style.display = "block";
+    scene.remove.apply(scene, scene.children);
+    currentGeometry = Geometries.Circle;
     //console.log("Coming soon!");
   }
   handleGeometry();
