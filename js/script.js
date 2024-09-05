@@ -51,8 +51,15 @@ const Geometries = {
 
 let lineXRange, lineAngleRange;
 let XLineRange, AngleLineRange;
-// let objectPlaneXarray = [-1.0, 1.0];
-// let objectPlaneYarray = [4, 4];
+
+let x1, x2, y1, y2;
+let x3, x4, y3, y4;
+let halfStep, lineLength;
+let lineA, lineB;
+let lineA1, lineB1;
+let x1PerspLineCase, x2PerspLineCase, z1PerspLineCase, z2PerspLineCase;
+let x3PerspLineCase, x4PerspLineCase, z3PerspLineCase, z4PerspLineCase;
+let spherePointOnImagePlaneParallelLinesCase;
 
 let circleXRange, circleYRange, circleRadRange;
 let xCircle, yCircle, radCircle;
@@ -95,7 +102,8 @@ function init() {
     function () {
       xObs = parseFloat(xObsRange.value);
       document.getElementById("obPoint1x").textContent = xObs.toFixed(3);
-      computePointProjection();
+      handleGeometry();
+      //computePointProjection();
     },
     false
   );
@@ -106,7 +114,8 @@ function init() {
     function () {
       yObs = parseFloat(yObsRange.value);
       document.getElementById("obPoint1y").textContent = yObs.toFixed(3);
-      computePointProjection();
+      handleGeometry();
+      //computePointProjection();
     },
     false
   );
@@ -117,7 +126,8 @@ function init() {
     function () {
       zObs = parseFloat(zObsRange.value);
       document.getElementById("obPoint1z").textContent = zObs.toFixed(3);
-      computePointProjection();
+      handleGeometry();
+      //computePointProjection();
     },
     false
   );
@@ -151,6 +161,7 @@ function init() {
       XLineRange = parseFloat(lineXRange.value);
       document.getElementById("objectLine1x").textContent =
         XLineRange.toFixed(3);
+      updateLineCoordinates();
     },
     false
   );
@@ -162,6 +173,7 @@ function init() {
       lineAngleRange = parseFloat(AngleLineRange.value);
       document.getElementById("objectAngle").textContent =
         lineAngleRange.toFixed(0);
+      updateLineCoordinates();
     },
     false
   );
@@ -204,6 +216,112 @@ function init() {
   render();
 }
 
+function updateLineCoordinates() {
+  let angleRad = (lineAngleRange * Math.PI) / 180.0;
+  //console.log("Angle ", angleLine, angleDeg, lineLength);
+  x1 = XLineRange - halfStep;
+  y1 = 0.0;
+  x2 = x1 + lineLength * Math.cos(angleRad);
+  y2 = y1 + lineLength * Math.sin(angleRad);
+  x3 = XLineRange + halfStep;
+  y3 = 0.0;
+  x4 = x3 + lineLength * Math.cos(angleRad);
+  y4 = y3 + lineLength * Math.sin(angleRad);
+
+  //console.log("x1, y1 ... ", x1, y1, x2, y2, x3, y3, x4, y4);
+
+  // let paramLambda = (-1.0 * yObs) / (yPoint - yObs);
+  // xPerspPointCase = xObs + paramLambda * (xPoint - xObs);
+  // zPerspPointCase = zObs - paramLambda * zObs;
+
+  let lambda1 = (-1.0 * yObs) / (y2 - yObs);
+  x1PerspLineCase = x1;
+  z1PerspLineCase = y1;
+  x2PerspLineCase = xObs + lambda1 * (x2 - xObs);
+  z2PerspLineCase = zObs - lambda1 * zObs;
+
+  let lambda2 = (-1.0 * yObs) / (y4 - yObs);
+  x3PerspLineCase = x3;
+  z3PerspLineCase = y3;
+  x4PerspLineCase = xObs + lambda2 * (x4 - xObs);
+  z4PerspLineCase = zObs - lambda2 * zObs;
+  //console.log("x1 y1, x2, y2 ", x1, y1, x2, y2);
+  /* console.log(
+    "image pln ",
+    x1PerspLineCase,
+    z1PerspLineCase,
+    x2PerspLineCase,
+    z2PerspLineCase 
+  );*/
+
+  show3DViewParallelLinesCase();
+}
+
+function show3DViewParallelLinesCase() {
+  scene.remove(lineA);
+  scene.remove(lineB);
+  scene.remove(lineA1);
+  scene.remove(lineB1);
+  scene.remove(spherePointOnImagePlaneParallelLinesCase);
+
+  show3DBoilerPlate();
+
+  let material1 = new THREE.LineBasicMaterial({ color: 0xaa00ff });
+  let geomVertices1 = [];
+  geomVertices1.push(new THREE.Vector3(x1, 0, -y1));
+  geomVertices1.push(new THREE.Vector3(x2, 0, -y2));
+  let geometry1 = new THREE.BufferGeometry().setFromPoints(geomVertices1);
+  lineA = new THREE.Line(geometry1, material1);
+  scene.add(lineA); // X-Z plane in the class, and XY plane in Three.js
+
+  let geomVertices2 = [];
+  geomVertices2.push(new THREE.Vector3(x3, 0, -y3));
+  geomVertices2.push(new THREE.Vector3(x4, 0, -y4));
+  let geometry2 = new THREE.BufferGeometry().setFromPoints(geomVertices2);
+  lineB = new THREE.Line(geometry2, material1);
+  scene.add(lineB); // X-Z plane in the class, and XY plane in Three.js
+
+  // let x1PerspLineCase, x2PerspLineCase, z1PerspLineCase, z2PerspLineCase;
+  // let x3PerspLineCase, x4PerspLineCase, z3PerspLineCase, z4PerspLineCase;
+
+  let material2 = new THREE.LineBasicMaterial({ color: 0x00ffff });
+  let geomVertices3 = [];
+  geomVertices3.push(new THREE.Vector3(x1PerspLineCase, z1PerspLineCase, 0));
+  geomVertices3.push(new THREE.Vector3(x2PerspLineCase, z2PerspLineCase, 0));
+  let geometry3 = new THREE.BufferGeometry().setFromPoints(geomVertices3);
+  lineA1 = new THREE.Line(geometry3, material2);
+  scene.add(lineA1); // X-Z plane in the class, and XY plane in Three.js
+
+  let geomVertices4 = [];
+  geomVertices4.push(new THREE.Vector3(x3PerspLineCase, z3PerspLineCase, 0));
+  geomVertices4.push(new THREE.Vector3(x4PerspLineCase, z4PerspLineCase, 0));
+  let geometry4 = new THREE.BufferGeometry().setFromPoints(geomVertices4);
+  lineB1 = new THREE.Line(geometry4, material2);
+  scene.add(lineB1); // X-Z plane in the class, and XY plane in Three.js
+
+  let xv, zv; // Vanishing point coordinates
+  zv = zObs;
+  let xa = x2PerspLineCase - x1PerspLineCase;
+  let za = zObs - z1PerspLineCase;
+  let zb = z2PerspLineCase - z1PerspLineCase;
+  xv = x1PerspLineCase + (xa * za) / zb;
+
+  // Image of Test Point, on Image Plane
+  let geometryS4 = new THREE.SphereGeometry(0.2, 32, 16);
+  let materialS4 = new THREE.MeshBasicMaterial({ color: 0x00aaff });
+  spherePointOnImagePlaneParallelLinesCase = new THREE.Mesh(
+    geometryS4,
+    materialS4
+  );
+  geometryS4.translate(xv, zv, 0);
+  scene.add(spherePointOnImagePlaneParallelLinesCase);
+
+  removeAndAddObserverPoint3D();
+  addVanishingLine();
+
+  render();
+}
+
 function showSelectedDiv() {
   let index = geomCombo.selectedIndex;
 
@@ -214,16 +332,17 @@ function showSelectedDiv() {
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Point;
   } else if (index === 1) {
-    document.getElementById("point").style.display = "none";
     document.getElementById("lines").style.display = "block";
+    document.getElementById("point").style.display = "none";
     document.getElementById("circle").style.display = "none";
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Lines;
     //console.log("Coming soon!");
-  } else { //if (index === 2) {
+  } else {
+    //if (index === 2) {
+    document.getElementById("circle").style.display = "block";
     document.getElementById("point").style.display = "none";
     document.getElementById("lines").style.display = "none";
-    document.getElementById("circle").style.display = "block";
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Circle;
     //console.log("Coming soon!");
@@ -235,6 +354,7 @@ function handleGeometry() {
   if (currentGeometry === Geometries.Point) {
     computePointProjection();
   } else if (currentGeometry === Geometries.Lines) {
+    updateLineCoordinates();
   }
 }
 
@@ -255,21 +375,19 @@ function initializeValues() {
   xPoint = 2.0;
   yPoint = 3.0;
 
+  halfStep = 0.4;
+  lineLength = 4.0;
+  XLineRange = 2.0;
+  lineAngleRange = 58.0;
+
   currentGeometry = Geometries.Point;
-}
-
-function computeLineCoordinates() {
-  let gap = 1.0;
-}
-
-function drawLines3DView() {
-  scene.remove.apply(scene, scene.children);
 }
 
 function computePointProjection() {
   let paramLambda = (-1.0 * yObs) / (yPoint - yObs);
   xPerspPointCase = xObs + paramLambda * (xPoint - xObs);
   zPerspPointCase = zObs - paramLambda * zObs;
+  console.log("xPoint case ", xPoint, yPoint, xPerspPointCase, zPerspPointCase);
   drawPointPersp2DView();
   show3DviewPointCase();
 }
@@ -376,19 +494,13 @@ function drawCoordAxesCanvas() {
   context01.restore();
 }
 
-function show3DviewPointCase() {
-  scene.remove(sphereObserver);
-  scene.remove(spherePointOnImagePlane);
-  scene.remove(spherePointOnObjectPlane);
-  scene.remove(lineObjectToObserver);
-  scene.remove(lineVanishing);
-
+function show3DBoilerPlate() {
   let line1, line2, line3;
   let material1 = new THREE.LineBasicMaterial({ color: 0x00ddff });
   let material2 = new THREE.LineBasicMaterial({ color: 0xffdd00 });
   let material3a = new THREE.LineBasicMaterial({ color: 0xaa5533 });
-  let material3 = new THREE.LineBasicMaterial({ color: 0x555555 });
-  let material4 = new THREE.LineBasicMaterial({ color: 0x880000 });
+  //let material3 = new THREE.LineBasicMaterial({ color: 0x555555 });
+  //let material4 = new THREE.LineBasicMaterial({ color: 0x880000 });
 
   // Image Plane
   let geomVertices1 = [];
@@ -429,6 +541,10 @@ function show3DviewPointCase() {
   let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
   let sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
+}
+
+function removeAndAddObserverPoint3D() {
+  scene.remove(sphereObserver);
 
   // Observer Point
   let geometryS2 = new THREE.SphereGeometry(0.2, 32, 16);
@@ -436,6 +552,19 @@ function show3DviewPointCase() {
   sphereObserver = new THREE.Mesh(geometryS2, materialS2);
   geometryS2.translate(xObs, zObs, -yObs);
   scene.add(sphereObserver);
+}
+
+function show3DviewPointCase() {
+  //scene.remove(sphereObserver);
+  scene.remove(spherePointOnImagePlane);
+  scene.remove(spherePointOnObjectPlane);
+  scene.remove(lineObjectToObserver);
+  scene.remove(lineVanishing);
+
+  let material3 = new THREE.LineBasicMaterial({ color: 0x555555 });
+
+  show3DBoilerPlate();
+  removeAndAddObserverPoint3D();
 
   // Test Point, on Object Plane
   let geometryS3 = new THREE.SphereGeometry(0.2, 32, 16);
@@ -459,14 +588,20 @@ function show3DviewPointCase() {
   lineObjectToObserver = new THREE.Line(geometry3, material3);
   scene.add(lineObjectToObserver);
 
+  addVanishingLine();
+  render();
+}
+
+function addVanishingLine() {
+  scene.remove(lineVanishing);
   // Vanishing Line
+  let material4 = new THREE.LineBasicMaterial({ color: 0x880000 });
   let geomVertices4 = [];
   geomVertices4.push(new THREE.Vector3(canvasXmin, zObs, 0));
   geomVertices4.push(new THREE.Vector3(canvasXmax, zObs, 0));
   let geometry4 = new THREE.BufferGeometry().setFromPoints(geomVertices4);
   lineVanishing = new THREE.Line(geometry4, material4);
   scene.add(lineVanishing);
-  render();
 }
 
 function setupCameraPosition() {
