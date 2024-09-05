@@ -12,7 +12,7 @@ on Joy of Mathematics, by Prof. KV Sir of
 Department of Mathematics, Indian Institute of Science, Bengaluru.
 
 Coding history:
-Initial version: by amarnath s, August 2024, amarnaths161@gmail.com
+Initial version: by amarnath s, September 2024, amarnaths161@gmail.com
 
 */
 
@@ -64,7 +64,17 @@ let spherePointOnImagePlaneParallelLinesCase;
 let circleXRange, circleYRange, circleRadRange;
 let xCircle, yCircle, radCircle;
 
+let circlePoints = []; // Object Plane
+let ellipsePoints = []; // Image Plane
+let numberPoints = 25;
+let lineCircle, lineEllipse;
+let geomCirclePoints = [];
+let geomEllipsePoints = [];
+let geomCircle, geomEllipse;
+
 let currentGeometry;
+let materialCircle;
+let materialEllipse;
 
 window.onload = init;
 
@@ -93,6 +103,9 @@ function init() {
   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.65);
   scene.add(directionalLight);
 
+  materialCircle = new THREE.LineBasicMaterial({ color: 0xaa00ff });
+  materialEllipse = new THREE.LineBasicMaterial({ color: 0x00ffff });
+
   geomCombo = document.getElementById("geom");
   geomCombo.addEventListener("click", showSelectedDiv, false);
 
@@ -103,7 +116,6 @@ function init() {
       xObs = parseFloat(xObsRange.value);
       document.getElementById("obPoint1x").textContent = xObs.toFixed(3);
       handleGeometry();
-      //computePointProjection();
     },
     false
   );
@@ -115,7 +127,6 @@ function init() {
       yObs = parseFloat(yObsRange.value);
       document.getElementById("obPoint1y").textContent = yObs.toFixed(3);
       handleGeometry();
-      //computePointProjection();
     },
     false
   );
@@ -127,7 +138,6 @@ function init() {
       zObs = parseFloat(zObsRange.value);
       document.getElementById("obPoint1z").textContent = zObs.toFixed(3);
       handleGeometry();
-      //computePointProjection();
     },
     false
   );
@@ -184,6 +194,7 @@ function init() {
     function () {
       xCircle = parseFloat(circleXRange.value);
       document.getElementById("objectCirclex").textContent = xCircle.toFixed(2);
+      updateCircleCoordinates();
     },
     false
   );
@@ -194,17 +205,7 @@ function init() {
     function () {
       yCircle = parseFloat(circleYRange.value);
       document.getElementById("objectCircley").textContent = yCircle.toFixed(2);
-    },
-    false
-  );
-
-  circleRadRange = document.getElementById("circleCaseRadius");
-  circleRadRange.addEventListener(
-    "input",
-    function () {
-      radCircle = parseFloat(circleRadRange.value);
-      document.getElementById("objectCircleRadius").textContent =
-        radCircle.toFixed(2);
+      updateCircleCoordinates();
     },
     false
   );
@@ -218,7 +219,6 @@ function init() {
 
 function updateLineCoordinates() {
   let angleRad = (lineAngleRange * Math.PI) / 180.0;
-  //console.log("Angle ", angleLine, angleDeg, lineLength);
   x1 = XLineRange - halfStep;
   y1 = 0.0;
   x2 = x1 + lineLength * Math.cos(angleRad);
@@ -227,12 +227,6 @@ function updateLineCoordinates() {
   y3 = 0.0;
   x4 = x3 + lineLength * Math.cos(angleRad);
   y4 = y3 + lineLength * Math.sin(angleRad);
-
-  //console.log("x1, y1 ... ", x1, y1, x2, y2, x3, y3, x4, y4);
-
-  // let paramLambda = (-1.0 * yObs) / (yPoint - yObs);
-  // xPerspPointCase = xObs + paramLambda * (xPoint - xObs);
-  // zPerspPointCase = zObs - paramLambda * zObs;
 
   let lambda1 = (-1.0 * yObs) / (y2 - yObs);
   x1PerspLineCase = x1;
@@ -245,14 +239,6 @@ function updateLineCoordinates() {
   z3PerspLineCase = y3;
   x4PerspLineCase = xObs + lambda2 * (x4 - xObs);
   z4PerspLineCase = zObs - lambda2 * zObs;
-  //console.log("x1 y1, x2, y2 ", x1, y1, x2, y2);
-  /* console.log(
-    "image pln ",
-    x1PerspLineCase,
-    z1PerspLineCase,
-    x2PerspLineCase,
-    z2PerspLineCase 
-  );*/
 
   show3DViewParallelLinesCase();
 }
@@ -272,17 +258,14 @@ function show3DViewParallelLinesCase() {
   geomVertices1.push(new THREE.Vector3(x2, 0, -y2));
   let geometry1 = new THREE.BufferGeometry().setFromPoints(geomVertices1);
   lineA = new THREE.Line(geometry1, material1);
-  scene.add(lineA); // X-Z plane in the class, and XY plane in Three.js
+  scene.add(lineA); // Object Plane
 
   let geomVertices2 = [];
   geomVertices2.push(new THREE.Vector3(x3, 0, -y3));
   geomVertices2.push(new THREE.Vector3(x4, 0, -y4));
   let geometry2 = new THREE.BufferGeometry().setFromPoints(geomVertices2);
   lineB = new THREE.Line(geometry2, material1);
-  scene.add(lineB); // X-Z plane in the class, and XY plane in Three.js
-
-  // let x1PerspLineCase, x2PerspLineCase, z1PerspLineCase, z2PerspLineCase;
-  // let x3PerspLineCase, x4PerspLineCase, z3PerspLineCase, z4PerspLineCase;
+  scene.add(lineB); // Object Plabne
 
   let material2 = new THREE.LineBasicMaterial({ color: 0x00ffff });
   let geomVertices3 = [];
@@ -290,14 +273,14 @@ function show3DViewParallelLinesCase() {
   geomVertices3.push(new THREE.Vector3(x2PerspLineCase, z2PerspLineCase, 0));
   let geometry3 = new THREE.BufferGeometry().setFromPoints(geomVertices3);
   lineA1 = new THREE.Line(geometry3, material2);
-  scene.add(lineA1); // X-Z plane in the class, and XY plane in Three.js
+  scene.add(lineA1); // Image Plane
 
   let geomVertices4 = [];
   geomVertices4.push(new THREE.Vector3(x3PerspLineCase, z3PerspLineCase, 0));
   geomVertices4.push(new THREE.Vector3(x4PerspLineCase, z4PerspLineCase, 0));
   let geometry4 = new THREE.BufferGeometry().setFromPoints(geomVertices4);
   lineB1 = new THREE.Line(geometry4, material2);
-  scene.add(lineB1); // X-Z plane in the class, and XY plane in Three.js
+  scene.add(lineB1); // Image Plane
 
   let xv, zv; // Vanishing point coordinates
   zv = zObs;
@@ -337,7 +320,6 @@ function showSelectedDiv() {
     document.getElementById("circle").style.display = "none";
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Lines;
-    //console.log("Coming soon!");
   } else {
     //if (index === 2) {
     document.getElementById("circle").style.display = "block";
@@ -345,7 +327,6 @@ function showSelectedDiv() {
     document.getElementById("lines").style.display = "none";
     scene.remove.apply(scene, scene.children);
     currentGeometry = Geometries.Circle;
-    //console.log("Coming soon!");
   }
   handleGeometry();
 }
@@ -355,7 +336,69 @@ function handleGeometry() {
     computePointProjection();
   } else if (currentGeometry === Geometries.Lines) {
     updateLineCoordinates();
+  } else {
+    updateCircleCoordinates();
   }
+}
+
+function updateCircleCoordinates() {
+  circlePoints.length = 0;
+  ellipsePoints.length = 0;
+  let angleStep = 360.0 / numberPoints;
+  angleStep = (angleStep * Math.PI) / 180.0;
+  let x, y, theta;
+  let xp, zp, lambda;
+
+  for (let i = 0; i < numberPoints; ++i) {
+    theta = i * angleStep;
+    x = xCircle + radCircle * Math.cos(theta);
+    y = yCircle + radCircle * Math.sin(theta);
+    circlePoints.push(x, y); // Object Plane
+
+    lambda = (-1.0 * yObs) / (y - yObs);
+    xp = xObs + lambda * (x - xObs);
+    zp = zObs - lambda * zObs;
+    ellipsePoints.push(xp, zp); // Image Plane
+    Draw3DViewEllipseCase();
+  }
+}
+
+function Draw3DViewEllipseCase() {
+  scene.remove(lineCircle);
+  scene.remove(lineEllipse);
+
+  show3DBoilerPlate();
+
+  geomCirclePoints.length = 0;
+  geomEllipsePoints.length = 0;
+
+  // In Object Plane
+  for (let i = 0; i < numberPoints; ++i) {
+    geomCirclePoints.push(
+      new THREE.Vector3(circlePoints[2 * i], 0, -circlePoints[2 * i + 1])
+    );
+  }
+  geomCirclePoints.push(
+    new THREE.Vector3(circlePoints[0], 0, -circlePoints[1])
+  );
+
+  geomCircle = new THREE.BufferGeometry().setFromPoints(geomCirclePoints);
+  lineCircle = new THREE.Line(geomCircle, materialCircle);
+  scene.add(lineCircle); // Object Plane
+
+  // On Image Plane
+  for (let i = 0; i < numberPoints; ++i) {
+    geomEllipsePoints.push(
+      new THREE.Vector3(ellipsePoints[2 * i], ellipsePoints[2 * i + 1], 0)
+    );
+  }
+  geomEllipsePoints.push(
+    new THREE.Vector3(ellipsePoints[0], ellipsePoints[1], 0)
+  );
+
+  geomEllipse = new THREE.BufferGeometry().setFromPoints(geomEllipsePoints);
+  lineEllipse = new THREE.Line(geomEllipse, materialEllipse);
+  scene.add(lineEllipse); // Image Plane
 }
 
 function initializeValues() {
@@ -380,6 +423,10 @@ function initializeValues() {
   XLineRange = 2.0;
   lineAngleRange = 58.0;
 
+  xCircle = 2.0;
+  yCircle = 3.0;
+  radCircle = 3.0;
+
   currentGeometry = Geometries.Point;
 }
 
@@ -387,7 +434,6 @@ function computePointProjection() {
   let paramLambda = (-1.0 * yObs) / (yPoint - yObs);
   xPerspPointCase = xObs + paramLambda * (xPoint - xObs);
   zPerspPointCase = zObs - paramLambda * zObs;
-  console.log("xPoint case ", xPoint, yPoint, xPerspPointCase, zPerspPointCase);
   drawPointPersp2DView();
   show3DviewPointCase();
 }
@@ -499,8 +545,6 @@ function show3DBoilerPlate() {
   let material1 = new THREE.LineBasicMaterial({ color: 0x00ddff });
   let material2 = new THREE.LineBasicMaterial({ color: 0xffdd00 });
   let material3a = new THREE.LineBasicMaterial({ color: 0xaa5533 });
-  //let material3 = new THREE.LineBasicMaterial({ color: 0x555555 });
-  //let material4 = new THREE.LineBasicMaterial({ color: 0x880000 });
 
   // Image Plane
   let geomVertices1 = [];
@@ -555,7 +599,6 @@ function removeAndAddObserverPoint3D() {
 }
 
 function show3DviewPointCase() {
-  //scene.remove(sphereObserver);
   scene.remove(spherePointOnImagePlane);
   scene.remove(spherePointOnObjectPlane);
   scene.remove(lineObjectToObserver);
