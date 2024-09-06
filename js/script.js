@@ -57,6 +57,7 @@ let x3, x4, y3, y4;
 let halfStep, lineLength;
 let lineA, lineB;
 let lineA1, lineB1;
+let xv, zv; // Vanishing point coordinates
 let x1PerspLineCase, x2PerspLineCase, z1PerspLineCase, z2PerspLineCase;
 let x3PerspLineCase, x4PerspLineCase, z3PerspLineCase, z4PerspLineCase;
 let spherePointOnImagePlaneParallelLinesCase;
@@ -66,7 +67,7 @@ let xCircle, yCircle, radCircle;
 
 let circlePoints = []; // Object Plane
 let ellipsePoints = []; // Image Plane
-let numberPoints = 25;
+let numberPoints = 20;
 let lineCircle, lineEllipse;
 let geomCirclePoints = [];
 let geomEllipsePoints = [];
@@ -241,6 +242,7 @@ function updateLineCoordinates() {
   z4PerspLineCase = zObs - lambda2 * zObs;
 
   show3DViewParallelLinesCase();
+  drawLines2DImagePlaneView();
 }
 
 function show3DViewParallelLinesCase() {
@@ -282,7 +284,6 @@ function show3DViewParallelLinesCase() {
   lineB1 = new THREE.Line(geometry4, material2);
   scene.add(lineB1); // Image Plane
 
-  let xv, zv; // Vanishing point coordinates
   zv = zObs;
   let xa = x2PerspLineCase - x1PerspLineCase;
   let za = zObs - z1PerspLineCase;
@@ -359,6 +360,7 @@ function updateCircleCoordinates() {
     xp = xObs + lambda * (x - xObs);
     zp = zObs - lambda * zObs;
     ellipsePoints.push(xp, zp); // Image Plane
+    drawEllipse2DImagePlaneView();
     Draw3DViewEllipseCase();
   }
 }
@@ -399,6 +401,14 @@ function Draw3DViewEllipseCase() {
   geomEllipse = new THREE.BufferGeometry().setFromPoints(geomEllipsePoints);
   lineEllipse = new THREE.Line(geomEllipse, materialEllipse);
   scene.add(lineEllipse); // Image Plane
+
+  geomCirclePoints.length = 0;
+  geomEllipsePoints.length = 0;
+
+  removeAndAddObserverPoint3D();
+  addVanishingLine();
+
+  render();
 }
 
 function initializeValues() {
@@ -424,7 +434,7 @@ function initializeValues() {
   lineAngleRange = 58.0;
 
   xCircle = 2.0;
-  yCircle = 3.0;
+  yCircle = 5.0;
   radCircle = 3.0;
 
   currentGeometry = Geometries.Point;
@@ -434,11 +444,84 @@ function computePointProjection() {
   let paramLambda = (-1.0 * yObs) / (yPoint - yObs);
   xPerspPointCase = xObs + paramLambda * (xPoint - xObs);
   zPerspPointCase = zObs - paramLambda * zObs;
-  drawPointPersp2DView();
+  drawPoint2DImagePlaneView();
   show3DviewPointCase();
 }
 
-function drawPointPersp2DView() {
+function drawEllipse2DImagePlaneView() {
+  let cWidth = canvas01.width;
+  let cHeight = canvas01.height;
+
+  context01.save();
+  context01.beginPath();
+  context01.fillStyle = "lightyellow";
+  context01.fillRect(0, 0, cWidth, cHeight);
+
+  drawCoordAxesCanvas();
+  drawVanishingLine();
+
+  context01.fillStyle = "#00aaff";
+  context01.lineWidth = 0;
+
+  context01.beginPath();
+  context01.moveTo(canvasMapX(ellipsePoints[0]), canvasMapZ(ellipsePoints[1]));
+  for (let i = 0; i < numberPoints; ++i) {
+    context01.lineTo(
+      canvasMapX(ellipsePoints[2 * i]),
+      canvasMapZ(ellipsePoints[2 * i + 1])
+    );
+  }
+  context01.lineTo(canvasMapX(ellipsePoints[0]), canvasMapZ(ellipsePoints[1]));
+
+  context01.stroke();
+  context01.restore();
+}
+
+function drawLines2DImagePlaneView() {
+  let cWidth = canvas01.width;
+  let cHeight = canvas01.height;
+
+  context01.save();
+  context01.beginPath();
+  context01.fillStyle = "lightyellow";
+  context01.fillRect(0, 0, cWidth, cHeight);
+
+  drawCoordAxesCanvas();
+  drawVanishingLine();
+
+  let x1p, x2p, x3p, x4p, z1p, z2p, z3p, z4p;
+  x1p = canvasMapX(x1PerspLineCase);
+  x2p = canvasMapX(x2PerspLineCase);
+  x3p = canvasMapX(x3PerspLineCase);
+  x4p = canvasMapX(x4PerspLineCase);
+
+  z1p = canvasMapZ(z1PerspLineCase);
+  z2p = canvasMapZ(z2PerspLineCase);
+  z3p = canvasMapZ(z3PerspLineCase);
+  z4p = canvasMapZ(z4PerspLineCase);
+
+  context01.fillStyle = "#00aaff";
+  context01.lineWidth = 0;
+
+  context01.beginPath();
+  context01.moveTo(x1p, z1p);
+  context01.lineTo(x2p, z2p);
+  context01.stroke();
+
+  context01.beginPath();
+  context01.moveTo(x3p, z3p);
+  context01.lineTo(x4p, z4p);
+  context01.stroke();
+
+  context01.beginPath();
+  context01.fillStyle = "#00aaff";
+  context01.lineWidth = 0;
+  context01.arc(canvasMapX(xv), canvasMapZ(zv), 3, 0, 2 * Math.PI, true);
+  context01.fill();
+  context01.restore();
+}
+
+function drawPoint2DImagePlaneView() {
   let cWidth = canvas01.width;
   let cHeight = canvas01.height;
 
