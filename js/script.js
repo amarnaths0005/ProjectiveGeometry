@@ -67,7 +67,7 @@ let xCircle, yCircle, radCircle;
 
 let circlePoints = []; // Object Plane
 let ellipsePoints = []; // Image Plane
-let numberPoints = 16;
+let numberPoints = 24;
 let lineCircle, lineEllipse;
 let geomCirclePoints = [];
 let geomEllipsePoints = [];
