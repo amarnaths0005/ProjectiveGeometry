@@ -433,7 +433,7 @@ function initializeValues() {
   yPoint = 3.0;
 
   halfStep = 0.4;
-  lineLength = 4.0;
+  lineLength = 5.0;
   XLineRange = 2.0;
   lineAngleRange = 58.0;
 
