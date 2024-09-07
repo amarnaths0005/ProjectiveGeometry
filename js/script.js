@@ -343,8 +343,8 @@ function handleGeometry() {
 }
 
 function updateCircleCoordinates() {
-  circlePoints.length = 0;
-  ellipsePoints.length = 0;
+  //circlePoints.length = 0;
+  //ellipsePoints.length = 0;
   let angleStep = 360.0 / numberPoints;
   angleStep = (angleStep * Math.PI) / 180.0;
   let x, y, theta;
@@ -354,12 +354,16 @@ function updateCircleCoordinates() {
     theta = i * angleStep;
     x = xCircle + radCircle * Math.cos(theta);
     y = yCircle + radCircle * Math.sin(theta);
-    circlePoints.push(x, y); // Object Plane
+    circlePoints[2 * i] = x;
+    circlePoints[2 * i + 1] = y;
+    //circlePoints.push(x, y); // Object Plane
 
     lambda = (-1.0 * yObs) / (y - yObs);
     xp = xObs + lambda * (x - xObs);
     zp = zObs - lambda * zObs;
-    ellipsePoints.push(xp, zp); // Image Plane
+    ellipsePoints[2 * i] = xp;
+    ellipsePoints[2 * i + 1] = zp;
+    //ellipsePoints.push(xp, zp); // Image Plane
     drawEllipse2DImagePlaneView();
     Draw3DViewEllipseCase();
   }
@@ -436,6 +440,11 @@ function initializeValues() {
   xCircle = 2.0;
   yCircle = 5.0;
   radCircle = 3.0;
+
+  for (let i = 0; i <= numberPoints; ++i) {
+    circlePoints.push(0.0, 0.0);
+    ellipsePoints.push(0.0, 0.0);
+  }
 
   currentGeometry = Geometries.Point;
 }
@@ -518,6 +527,16 @@ function drawLines2DImagePlaneView() {
   context01.lineWidth = 0;
   context01.arc(canvasMapX(xv), canvasMapZ(zv), 3, 0, 2 * Math.PI, true);
   context01.fill();
+
+  let xPos = canvasMapX(xv) - 7;
+  let yPos = canvasMapZ(zv) - 6;
+  context01.font = "10pt sans-serif";
+  context01.fillStyle = "#a52a2a";
+  context01.textAlign = "left";
+  let text = "VP";
+  context01.beginPath();
+  context01.fillText(text, xPos, yPos);
+  context01.stroke();
   context01.restore();
 }
 
