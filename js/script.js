@@ -350,19 +350,22 @@ function updateCircleCoordinates() {
   let x, y, theta;
   let xp, zp, lambda;
 
+  let j, j1;
   for (let i = 0; i < numberPoints; ++i) {
     theta = i * angleStep;
     x = xCircle + radCircle * Math.cos(theta);
     y = yCircle + radCircle * Math.sin(theta);
-    circlePoints[2 * i] = x;
-    circlePoints[2 * i + 1] = y;
+    j = 2 * i;
+    j1 = j + 1;
+    circlePoints[j] = x;
+    circlePoints[j1] = y;
     //circlePoints.push(x, y); // Object Plane
 
     lambda = (-1.0 * yObs) / (y - yObs);
     xp = xObs + lambda * (x - xObs);
     zp = zObs - lambda * zObs;
-    ellipsePoints[2 * i] = xp;
-    ellipsePoints[2 * i + 1] = zp;
+    ellipsePoints[j] = xp;
+    ellipsePoints[j1] = zp;
     //ellipsePoints.push(xp, zp); // Image Plane
     drawEllipse2DImagePlaneView();
     Draw3DViewEllipseCase();
@@ -379,9 +382,11 @@ function Draw3DViewEllipseCase() {
   geomEllipsePoints.length = 0;
 
   // In Object Plane
+  let j;
   for (let i = 0; i < numberPoints; ++i) {
+    j = 2 * i;
     geomCirclePoints.push(
-      new THREE.Vector3(circlePoints[2 * i], 0, -circlePoints[2 * i + 1])
+      new THREE.Vector3(circlePoints[j], 0, -circlePoints[j + 1])
     );
   }
   geomCirclePoints.push(
@@ -394,8 +399,9 @@ function Draw3DViewEllipseCase() {
 
   // On Image Plane
   for (let i = 0; i < numberPoints; ++i) {
+    j = 2 * i;
     geomEllipsePoints.push(
-      new THREE.Vector3(ellipsePoints[2 * i], ellipsePoints[2 * i + 1], 0)
+      new THREE.Vector3(ellipsePoints[j], ellipsePoints[j + 1], 0)
     );
   }
   geomEllipsePoints.push(
